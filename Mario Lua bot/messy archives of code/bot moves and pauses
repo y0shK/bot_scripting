@@ -1,0 +1,45 @@
+local tableGame = {}
+JoypadB = {B=true}
+JoypadRight = {right=true}
+JoypadStart = {start=true}
+JoypadLeft = {left=true}
+
+toggle = 0
+memArray = {}
+
+function PressStart()
+  joypad.set(1, JoypadStart)
+end
+
+while (true) do
+  gui.text(30, 50, "Hello World")
+  gui.text(30, 75, "trying this again")
+  
+  tableGame = joypad.get(1)
+  
+  if tableGame.start then
+    tableStart = true
+    gui.text(50, 85, "start pressed")
+    PressStart()
+  end
+  
+  if tableStart then
+    gui.text(100, 100, "start already pressed")
+  end
+  
+  --use this byte value for testing
+  mem = memory.readbyte(0x0002);
+  gui.text(50, 150, mem)
+  
+  -- if there is no obstacle, then keep heading right
+  -- otherwise, try to jump over the obstacle
+  if toggle == 0 then
+    joypad.set(1, JoypadRight)
+  else
+    joypad.set(1, JoypadB)
+  end
+  
+  table.insert(memArray, mem)
+  
+  emu.frameadvance();
+end
