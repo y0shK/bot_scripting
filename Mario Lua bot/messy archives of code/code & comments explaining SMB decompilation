@@ -1,0 +1,135 @@
+local tableGame = {}
+JoypadB = {B=true}
+JoypadRight = {right=true}
+JoypadStart = {start=true}
+JoypadLeft = {left=true}
+
+toggle = 0
+memArray = {}
+
+function PressStart()
+  joypad.set(1, JoypadStart)
+end
+
+function checkFrames(byteFrame1, byteFrame2, switch)
+  if byteFrame1 == byteFrame2 then
+    joypad.set(1, JoypadRight)
+  end
+  
+  if byteFrame1 ~= byteFrame2 then
+    joypad.set(1, JoypadB)
+    switch = 1
+    return switch
+  end
+  
+  --[==[
+  if the frames before and after emu.frameadvance
+  are the same, then we know Mario can keep running
+  else, we need to have Mario jump to get over an obstacle
+  --]==]
+end
+
+function setMotion(switch)
+  if switch == 0 then
+    joypad.set(1, JoypadRight)
+  end
+  
+  if switch == 1 then
+    joypad.set(1, JoypadB)
+  end
+end
+  
+while (true) do
+  gui.text(30, 50, "Hello World")
+  gui.text(30, 75, "trying this again")
+  
+  tableGame = joypad.get(1)
+  
+  if tableGame.start then
+    tableStart = true
+    gui.text(100, 120, "start pressed")
+    PressStart()
+  end
+  
+  if tableStart then
+    gui.text(100, 100, "start already pressed")
+  end
+  
+  mem = memory.readbyte(0x0002);
+  memX = memory.readbyte(0x0203) -- Sprite X Position
+  memY = memory.readbyte(0x0200) -- Sprite Data or Sprite Y Position
+  
+  --memX is Sprite X Position
+  --memXTest1 is Player X Scroll
+  --memXTest2 is Player Pos For Scroll
+  --memXTest3 is Vertical Scroll
+  
+  --now trying: Screen Edge X Pos & Screen Left X Pos
+  memXTestSecond = rom.readbyte(0x071c)
+  memXTestSecond2 = rom.readbyte(0x071a)
+  
+  --0x57 works for Mario's x spd
+  --0x86 works for Mario's x position (use this for code)
+  --0xce works for Mario's y position
+  --0x9f works for mario's y spd
+  
+  memXTest1a = memory.readbyte(0x57)
+  memXTest2a = memory.readbyte(0x86)
+  memXTest3a = memory.readbyte(0xce)
+  memXTestAgain = memory.readbyte(0x9f)
+  
+  gui.text(50, 150, mem)
+  gui.text(50, 200, memX, "red")
+  gui.text(50, 216, memY, "green")
+  
+  gui.text(80, 150, memXTest1a, "green")
+  gui.text(80, 200, memXTest2a, "green")
+  gui.text(80, 216, memXTest3a, "green")
+  
+  gui.text(150, 150, memXTestSecond, "red")
+  gui.text(150, 200, memXTestSecond2, "red")
+  
+  -- if there is no obstacle, then keep heading right
+  -- otherwise, try to jump over the obstacle
+  
+  setMotion(toggle)
+  
+  old1 = memory.readbyte(0x071c) --ScreenLeftXPos
+  old2 = memory.readbyte(0x071a) --ScreenEdgePageLoc
+  old3 = memory.readbyte(0x06ff) --PlayerXScroll
+  old4 = memory.readbyte(0x0755) --PlayerPosForScroll
+  old5 = memory.readbyte(0x073f) --HorizontalScroll
+  
+  gui.text(180, 50, old1)
+  gui.text(180, 60, old2)
+  gui.text(180, 70, old3)
+  gui.text(180, 80, old4)
+  gui.text(180, 90, old5)
+  
+  emu.frameadvance();
+  
+  --empirically, I noticed frameadvance does nothing to change readbyte, for rom or memory
+  
+  --the below are the same as the initially tested variables
+  memXTest1b = memory.readbyte(0x57)
+  memXTest2b = memory.readbyte(0x86)
+  memXTest3b = memory.readbyte(0xce)
+  memXTestAgain2 = memory.readbyte(0x9f)
+  
+  gui.text(215, 100, memXTestAgain2)
+  
+  gui.text(120, 150, memXTest1b, "green")
+  gui.text(120, 200, memXTest2b, "green")
+  gui.text(120, 216, memXTest3b, "green")
+  
+  gui.text(170, 150, memXTestSecond, "red")
+  gui.text(170, 200, memXTestSecond2, "red")
+  
+  gui.text(215, 150, memXTestAgain2)
+  
+  memAfter = memory.readbyte(0x0003);
+  gui.text(50, 170, memAfter)
+  
+  checkFrames(mem, memAfter, toggle)
+  setMotion(toggle)
+end
