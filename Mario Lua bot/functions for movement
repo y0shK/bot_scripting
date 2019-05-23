@@ -1,0 +1,14 @@
+function JumpObstacle(mario_x_spd, mario_y_pos)
+  --if Mario runs into an obstacle, I can detect it if his speed is close to zero, since speed during movement = 24
+  -- at full speed, the apex yPos of the jump is 105
+  --yPos needs to be high enough to make the jump
+  joypad.set(1, JoypadA)
+end
+
+function Motion(mario_x_spd, mario_y_pos)
+  joypad.set(1, JoypadRight)
+  
+  if mario_x_spd < 1 and mario_y_pos > 106 then
+    JumpObstacle(mario_x_spd, mario_y_pos)
+  end
+end
