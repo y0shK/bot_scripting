@@ -1,0 +1,13 @@
+local tableGame = {}
+JoypadA = {A=true}
+JoypadLeft = {left=true}
+JoypadRight = {right=true}
+JoypadStart = {start=true}
+
+function PressStart()
+  joypad.set(1, JoypadStart)
+end
+
+function PressA()
+  joypad.set(1, JoypadA)
+end
