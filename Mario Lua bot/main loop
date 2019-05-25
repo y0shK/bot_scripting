@@ -10,21 +10,45 @@ while (true) do
   end
   
   --xPos is an integer from [0, 256) which increases and then wraps back to zero as Mario moves forward
-  --xSpd is an integer that returns 24 when Mario is moving at max speed to the right and a number in [0, 24) when Mario is experiencing acceleration towards the right (he is always moving right, so d/dx > 0)
+  --xSpd is an integer that returns 24 when Mario is moving at max acceleration to the right and a number in [0, 24) when Mario is experiencing acceleration towards the right (he is always moving right, so d/dx > 0)
   xPos = memory.readbyte(0x86)
+  enemyXPos = memory.readbyte(0x87)
+  
   xSpd = memory.readbyte(0x57)
+  enemyXSpd = memory.readbyte(0x58)
+  
+  --if player X position - enemy X position = 0 or is close to zero, then Mario is dead
+  --to avoid collision, we want Mario to jump at a suitable length away from the enemy, say 64 bytes
+  relXPos = memory.readbyte(0x03ad)
+  enemyRelXPos = memory.readbyte(0x03ae)
+  deltaXPos = math.abs(relXPos - enemyRelXPos)
   
   --yPos is an integer that returns 176 when Mario is solidly on the ground and [0, 176) when Mario is in the air
   --ySpd is an integer that returns 255 when Mario is at the apex of his jump and 0 when he is on the ground; values are in (0, 255) between the ground and apex of jump
   yPos = memory.readbyte(0xce)
+  enemyYPos = memory.readbyte(0xcf)
+  
   ySpd = memory.readbyte(0x9f)
+  enemyYSpd = memory.readbyte(0xa0)
+  
+  relYPos = memory.readbyte(0x03b8)
+  enemyRelYPos = memory.readbyte(0x03b9)
+  deltaYPos = math.abs(relYPos - enemyRelYPos)
+  
+  --take the hypotenuse of delta x and delta y so that we can project more accurately how close enemies are to Mario
+  deltaSumSquared = deltaXPos^2 + deltaYPos^2
+  pythag = math.floor(math.sqrt(deltaSumSquared))
   
   gui.text(140, 80, xPos)
   gui.text(140, 90, xSpd)
   gui.text(140, 100, yPos)
   gui.text(140, 110, ySpd)
+  gui.text(170, 80, enemyXPos)
+  gui.text(170, 90, relXPos)
+  gui.text(170, 130, pythag)
   
-  Motion(xSpd, yPos)
-  
+  Motion(xSpd, yPos, pythag)
   emu.frameadvance()
+  
+  joypad.set(1, JoypadRight)
 end
