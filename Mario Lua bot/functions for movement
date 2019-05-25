@@ -1,14 +1,24 @@
-function JumpObstacle(mario_x_spd, mario_y_pos)
+function JumpObstacle()
   --if Mario runs into an obstacle, I can detect it if his speed is close to zero, since speed during movement = 24
   -- at full speed, the apex yPos of the jump is 105
-  --yPos needs to be high enough to make the jump
+  --yPos is 176 when Mario is on the ground and decreases to 105 at its apex
   joypad.set(1, JoypadA)
 end
 
-function Motion(mario_x_spd, mario_y_pos)
+function AvoidEnemy()
+  --if Mario is closer than 32 pixels to an enemy, jump
+  joypad.set(1, JoypadA)
+end
+
+function Motion(mario_x_spd, mario_y_pos, delta_pos)
   joypad.set(1, JoypadRight)
   
+  --Mario yPos > 106 because he must be lower than a certain jump height and have no horizontal speed in order to stop movement, jump, and proceed
   if mario_x_spd < 1 and mario_y_pos > 106 then
-    JumpObstacle(mario_x_spd, mario_y_pos)
+    JumpObstacle()
+  end
+  
+  if delta_pos <= 32 then
+    AvoidEnemy()
   end
 end
