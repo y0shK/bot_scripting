@@ -10,15 +10,27 @@ function AvoidEnemy()
   joypad.set(1, JoypadA)
 end
 
-function Motion(mario_x_spd, mario_y_pos, delta_pos)
+function AvoidPit()
+  joypad.set(1, JoypadA)
+end
+
+function Motion(mario_x_spd, mario_y_pos, delta_pos, groundPos, airPos, jumpCheck)
   joypad.set(1, JoypadRight)
   
   --Mario yPos > 106 because he must be lower than a certain jump height and have no horizontal speed in order to stop movement, jump, and proceed
+  
+  --airDiff indicates how high up Mario is, which is used to see if he should jump again or not
+  airDiff = groundPos - airPos
+  
   if mario_x_spd < 1 and mario_y_pos > 106 then
     JumpObstacle()
-  end
-  
-  if delta_pos <= 32 then
+  elseif delta_pos <= 32 then
     AvoidEnemy()
+  --the below if statement checks if Mario is on the ground, is not jumping, and has the sufficient speed to jump over the pipe
+  elseif airDiff == 176 and jumpCheck == 0 and mario_x_spd > 18 then
+    AvoidPit()
+  --if Mario has no need to jump, then he should keep moving right to progress
+  else
+    MoveRight()
   end
 end
