@@ -39,16 +39,30 @@ while (true) do
   deltaSumSquared = deltaXPos^2 + deltaYPos^2
   pythag = math.floor(math.sqrt(deltaSumSquared))
   
+  --playerYMoveForce checks the force of gravity pulling down on Mario after he reaches the apex of the jump
+  --ScreenRightX is an indication of whether Mario is jumping, running, or dying
+  --JumpOriginY is 176 at y = 0 and is used for calculations to see how high up in the air Mario is
+  
+  playerYMoveForce = memory.readbyte(0x0433)
+  ScreenRightX = memory.readbyte(0x1d)
+  JumpOriginY = memory.readbyte(0x0708)
+  
   gui.text(140, 80, xPos)
   gui.text(140, 90, xSpd)
   gui.text(140, 100, yPos)
   gui.text(140, 110, ySpd)
-  gui.text(170, 80, enemyXPos)
-  gui.text(170, 90, relXPos)
-  gui.text(170, 130, pythag)
+  gui.text(180, 80, enemyXPos)
+  gui.text(180, 90, relXPos)
+  gui.text(180, 100, enemyRelXPos)
+  gui.text(180, 110, deltaXPos)
   
-  Motion(xSpd, yPos, pythag)
+  gui.text(170, 120, playerYMoveForce)
+  gui.text(170, 130, ScreenRightX)
+  gui.text(170, 140, JumpOriginY)
+  
+  Motion(xSpd, yPos, pythag, JumpOriginY, playerYMoveForce, ScreenRightX)
+  
   emu.frameadvance()
   
-  joypad.set(1, JoypadRight)
+  joypad.set(1, JoypadA)
 end
