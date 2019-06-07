@@ -31,6 +31,6 @@ function Motion(mario_x_spd, mario_y_pos, delta_pos, groundPos, airPos, jumpChec
     AvoidPit()
   --if Mario has no need to jump, then he should keep moving right to progress
   else
-    MoveRight()
+    joypad.set(1, JoypadRight)
   end
 end
