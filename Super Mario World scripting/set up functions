@@ -1,0 +1,27 @@
+--clear joypad on death, do so by un-pressing all buttons
+function clearJoypad()
+  controller = {}
+  for i=1, #marioTable do
+    controller[marioTable[i]] = false
+  end
+end
+
+--automate Mario's movement
+function move(marioTable)
+  joypad.set(1, JoypadRight)
+end
+
+--weight rewards for improving coin, life, or "dialogue" -> indicates a new level
+function assignRewards(originalVar, changedVar, count)
+  if changedVar ~= originalVar then
+    count = count + 1
+  end
+end
+
+--check for death by examining life counter
+function checkDeath(beforeLives, afterLives)
+  if beforeLives == afterLives - 1 then
+    death = true
+    return death
+  end
+  
