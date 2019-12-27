@@ -1,0 +1,28 @@
+marioTable = {}
+--list of possible actions for the bot to take
+marioTable.ButtonNames = {
+  "A",
+  "B",
+  "X",
+  "Y",
+  "Up",
+  "Down",
+  "Left",
+  "Right",
+}
+joypad.get(1) --instantiate the joypad used to automate
+JoypadRight = {right=true} --perpetually moving right
+
+score = 0 --increases if the bot achieves awards
+
+--define relevant variables (like Mario's position or counters) with memory values
+marioX = memory.readbyte(0x0094)
+marioY = memory.readbyte(0x0096)
+horizontalProgress = memory.readbyte(0x001A)
+
+coins = memory.readbyte(0x0DBF) --also includes Dragon Coins
+lives = memory.readbyte(0x0DBE)
+dialogue = memory.readbyte(0x0010)
+
+--append the counters to assess the automated performance
+scoreIncrements = {lives, coins, dialogue}
